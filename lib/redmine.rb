@@ -134,6 +134,7 @@ Redmine::AccessControl.map do |map|
   map.project_module :time_tracking do |map|
     map.permission :log_time, {:timelog => [:new, :create]}, :require => :loggedin
     map.permission :view_time_entries, {:timelog => [:index, :report, :show]}, :read => true
+    map.permission :view_own_time_entries, {:timelog => [:index, :report, :show]}, :read => true
     map.permission :edit_time_entries, {:timelog => [:edit, :update, :destroy, :bulk_edit, :bulk_update]}, :require => :member
     map.permission :edit_own_time_entries, {:timelog => [:edit, :update, :destroy,:bulk_edit, :bulk_update]}, :require => :loggedin
     map.permission :manage_project_activities, {:project_enumerations => [:update, :destroy]}, :require => :member

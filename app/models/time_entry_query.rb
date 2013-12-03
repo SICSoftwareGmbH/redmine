@@ -67,14 +67,16 @@ class TimeEntryQuery < Query
     end
     principals.uniq!
     principals.sort!
-    users = principals.select {|p| p.is_a?(User)}
 
-    users_values = []
-    users_values << ["<< #{l(:label_me)} >>", "me"] if User.current.logged?
-    users_values += users.collect{|s| [s.name, s.id.to_s] }
-    add_available_filter("user_id",
-      :type => :list_optional, :values => users_values
-    ) unless users_values.empty?
+    if User.current.allowed_to?(:view_time_entries, project)
+      users = principals.select {|p| p.is_a?(User)}
+      users_values = []
+      users_values << ["<< #{l(:label_me)} >>", "me"] if User.current.logged?
+      users_values += users.collect{|s| [s.name, s.id.to_s] }
+      add_available_filter("user_id",
+        :type => :list_optional, :values => users_values
+      ) unless users_values.empty?
+    end
 
     activities = (project ? project.activities : TimeEntryActivity.shared.active)
     add_available_filter("activity_id",

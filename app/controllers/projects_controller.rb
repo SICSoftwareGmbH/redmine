@@ -156,6 +156,8 @@ class ProjectsController < ApplicationController
 
     if User.current.allowed_to?(:view_time_entries, @project)
       @total_hours = TimeEntry.visible.where(cond).sum(:hours).to_f
+    elsif User.current.allowed_to?(:view_own_time_entries, @project)
+      @total_hours = TimeEntry.visible.where(cond).where(user_id: User.current.id).sum(:hours).to_f
     end
 
     @key = User.current.rss_key

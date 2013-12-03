@@ -399,6 +399,7 @@ en-GB:
   permission_delete_issue_watchers: Delete watchers
   permission_log_time: Log spent time
   permission_view_time_entries: View spent time
+  permission_view_own_time_entries: View own spent time
   permission_edit_time_entries: Edit time logs
   permission_edit_own_time_entries: Edit own time logs
   permission_manage_news: Manage news

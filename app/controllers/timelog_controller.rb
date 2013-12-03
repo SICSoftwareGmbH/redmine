@@ -82,6 +82,10 @@ class TimelogController < ApplicationController
 
     @report = Redmine::Helpers::TimeReport.new(@project, @issue, params[:criteria], params[:columns], scope)
 
+    unless User.current.allowed_to?(:view_time_entries, @project)
+      @report.available_criteria.delete('user')
+    end
+
     respond_to do |format|
       format.html { render :layout => !request.xhr? }
       format.csv  { send_data(report_to_csv(@report), :type => 'text/csv; header=present', :filename => 'timelog.csv') }
@@ -284,6 +288,9 @@ private
     scope = @query.results_scope(options)
     if @issue
       scope = scope.on_issue(@issue)
+    end
+    unless User.current.allowed_to?(:view_time_entries, @project)
+      scope = scope.where(:user_id => User.current.id)
     end
     scope
   end

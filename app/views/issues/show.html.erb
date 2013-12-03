@@ -60,8 +60,9 @@
       rows.right l(:field_estimated_hours), l_hours(@issue.estimated_hours), :class => 'estimated-hours'
     end
   end
-  if User.current.allowed_to?(:view_time_entries, @project)
-    rows.right l(:label_spent_time), (@issue.total_spent_hours > 0 ? link_to(l_hours(@issue.total_spent_hours), project_issue_time_entries_path(@project, @issue)) : "-"), :class => 'spent-time'
+  if User.current.allowed_to?(:view_time_entries, @project) || User.current.allowed_to?(:view_own_time_entries, @project)
+    options = User.current.allowed_to?(:view_time_entries, @project) ? {} : {:user => User.current}
+    rows.right l(:label_spent_time), (@issue.total_spent_hours(options) > 0 ? link_to(l_hours(@issue.total_spent_hours(options)), project_issue_time_entries_path(@project, @issue)) : "-"), :class => 'spent-time'
   end
 end %>
 <%= render_custom_fields_rows(@issue) %>

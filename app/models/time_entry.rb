@@ -45,7 +45,10 @@ class TimeEntry < ActiveRecord::Base
   validate :validate_time_entry
 
   scope :visible, lambda {|*args|
-    includes(:project).where(Project.allowed_to_condition(args.shift || User.current, :view_time_entries, *args))
+    includes(:project).where(%Q{
+      (#{Project.allowed_to_condition(args.shift || User.current, :view_time_entries, *args)}) OR
+      (#{Project.allowed_to_condition(args.shift || User.current, :view_own_time_entries, *args)})
+    })
   }
   scope :on_issue, lambda {|issue|
     includes(:issue).where("#{Issue.table_name}.root_id = #{issue.root_id} AND #{Issue.table_name}.lft >= #{issue.lft} AND #{Issue.table_name}.rgt <= #{issue.rgt}")
