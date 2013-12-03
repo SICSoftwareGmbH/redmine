@@ -45,9 +45,10 @@ class TimeEntry < ActiveRecord::Base
   validate :validate_time_entry
 
   scope :visible, lambda {|*args|
+    user = args.shift || User.current
     includes(:project).where(%Q{
-      (#{Project.allowed_to_condition(args.shift || User.current, :view_time_entries, *args)}) OR
-      (#{Project.allowed_to_condition(args.shift || User.current, :view_own_time_entries, *args)})
+      (#{Project.allowed_to_condition(user, :view_time_entries, *args)}) OR
+      (#{Project.allowed_to_condition(user, :view_own_time_entries, *args)})
     })
   }
   scope :on_issue, lambda {|issue|
