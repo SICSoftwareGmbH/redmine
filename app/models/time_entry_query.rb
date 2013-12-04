@@ -68,7 +68,7 @@ class TimeEntryQuery < Query
     principals.uniq!
     principals.sort!
 
-    if User.current.allowed_to?(:view_time_entries, project)
+    if User.current.allowed_to?(:view_time_entries, project, :global => true)
       users = principals.select {|p| p.is_a?(User)}
       users_values = []
       users_values << ["<< #{l(:label_me)} >>", "me"] if User.current.logged?
