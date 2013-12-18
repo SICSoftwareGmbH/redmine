@@ -76,13 +76,21 @@ class TimelogController < ApplicationController
     end
   end
 
+  def user_has_global_permission(project)
+    if (project.present?)
+      return User.current.allowed_to?(:view_time_entries, @project)
+    end
+      return User.current.admin?
+    else
+  end
+
   def report
     @query = TimeEntryQuery.build_from_params(params, :project => @project, :name => '_')
     scope = time_entry_scope
 
     @report = Redmine::Helpers::TimeReport.new(@project, @issue, params[:criteria], params[:columns], scope)
 
-    unless User.current.allowed_to?(:view_time_entries, @project, :global => true)
+    unless user_has_global_permission(@project)
       @report.available_criteria.delete('user')
     end
 
@@ -289,7 +297,7 @@ private
     if @issue
       scope = scope.on_issue(@issue)
     end
-    unless User.current.allowed_to?(:view_time_entries, @project, :global => true)
+    unless user_has_global_permission(@project)
       scope = scope.where(:user_id => User.current.id)
     end
     scope
